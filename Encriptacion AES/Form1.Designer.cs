@@ -42,10 +42,12 @@
             // 
             // txtSentence
             // 
+            txtSentence.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtSentence.Location = new Point(46, 146);
             txtSentence.Name = "txtSentence";
-            txtSentence.Size = new Size(224, 23);
+            txtSentence.Size = new Size(224, 21);
             txtSentence.TabIndex = 0;
+            txtSentence.KeyPress += OnTextChanged;
             // 
             // lbl1
             // 
@@ -99,17 +101,19 @@
             // txtEncryptedM
             // 
             txtEncryptedM.Enabled = false;
+            txtEncryptedM.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtEncryptedM.Location = new Point(46, 266);
             txtEncryptedM.Name = "txtEncryptedM";
-            txtEncryptedM.Size = new Size(224, 23);
+            txtEncryptedM.Size = new Size(224, 21);
             txtEncryptedM.TabIndex = 6;
             // 
             // txtDecryptedM
             // 
             txtDecryptedM.Enabled = false;
+            txtDecryptedM.Font = new Font("Times New Roman", 9F, FontStyle.Regular, GraphicsUnit.Point, 0);
             txtDecryptedM.Location = new Point(46, 331);
             txtDecryptedM.Name = "txtDecryptedM";
-            txtDecryptedM.Size = new Size(224, 23);
+            txtDecryptedM.Size = new Size(224, 21);
             txtDecryptedM.TabIndex = 8;
             // 
             // lblDecrypted

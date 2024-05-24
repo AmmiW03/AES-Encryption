@@ -1,10 +1,14 @@
+using System.Collections.Generic;
 using System.Text;
 
 namespace Encriptacion_AES
 {
     public partial class Form1 : Form
     {
-        private static readonly string Key = "llaveSuperSegura";
+        private readonly byte[] Key = { 2,5,3,5 };
+        List<byte> sentence = new List<byte>();
+        List<byte> encrypted = new List<byte>();
+        List<byte> decrypted = new List<byte>();
 
         public Form1()
         {
@@ -13,18 +17,14 @@ namespace Encriptacion_AES
 
         private void btnEncrypt_Click(object sender, EventArgs e)
         {
-            string plainText = txtSentence.Text;
-            if (string.IsNullOrWhiteSpace(plainText))
-            {
-                MessageBox.Show("Ingrese un mensaje para cifrar.");
-                return;
-            }
-
+            encrypted.Clear();
+            txtEncryptedM.Text = String.Empty;
             try
             {
-                string encryptedText = EncryptDecrypt(plainText, Key);
-                txtEncryptedM.Text = Convert.ToBase64String(Encoding.UTF8.GetBytes(encryptedText));
+                string encryptedText = EncryptDecrypt(sentence, Key, true);
+                txtEncryptedM.Text = encryptedText;
                 txtSentence.Text = String.Empty;
+                sentence.Clear();
             }
             catch (Exception ex)
             {
@@ -34,17 +34,11 @@ namespace Encriptacion_AES
 
         private void btnDecrypt_Click(object sender, EventArgs e)
         {
-            string encryptedText = txtEncryptedM.Text;
-            if (string.IsNullOrWhiteSpace(encryptedText))
-            {
-                MessageBox.Show("Ingrese un mensaje cifrado para descifrar.");
-                return;
-            }
-
+            decrypted.Clear();
+            txtDecryptedM.Text = String.Empty;
             try
             {
-                encryptedText = Encoding.UTF8.GetString(Convert.FromBase64String(encryptedText)); // Convertir de Base64 a cadena
-                string decryptedText = EncryptDecrypt(encryptedText, Key);
+                string decryptedText = EncryptDecrypt(encrypted, Key, false);
                 txtDecryptedM.Text = decryptedText;
             }
             catch (Exception ex)
@@ -53,24 +47,70 @@ namespace Encriptacion_AES
             }
         }
 
-        private string EncryptDecrypt(string input, string key)
+        private string EncryptDecrypt(List<byte> input, byte[] key, bool flag)
         {
-            var inputBytes = Encoding.UTF8.GetBytes(input);
-            var keyBytes = Encoding.UTF8.GetBytes(key);
-            var outputBytes = new byte[inputBytes.Length];
-
-            for (int i = 0; i < inputBytes.Length; i++)
+            if(flag)
             {
-                outputBytes[i] = (byte)(inputBytes[i] ^ keyBytes[i % keyBytes.Length]);
-            }
+                var outputBytes = new byte[input.Count];
 
-            return Encoding.UTF8.GetString(outputBytes);
+                for (int i = 0; i < input.Count; i++)
+                {
+                    outputBytes[i] = (byte)(input[i] ^ key[i % key.Length]);
+                }
+                for (int i = 0; i < outputBytes.Length; i++)
+                {
+                    encrypted.Add(outputBytes[i]);
+                }
+                return Encoding.ASCII.GetString(outputBytes);
+            }
+            else
+            {
+                decrypted.Clear();   
+                txtDecryptedM.Text= String.Empty;
+                var outputBytes = new byte[input.Count];
+
+                for (int i = 0; i < input.Count; i++)
+                {
+                    outputBytes[i] = (byte)(input[i] ^ key[i % key.Length]);
+                }
+                for(int i = 0; i < outputBytes.Length; i++)
+                {
+                    decrypted.Add(outputBytes[i]);
+                }
+                return Encoding.ASCII.GetString(outputBytes);
+            }
         }
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
+            txtSentence.Text = String.Empty;
             txtEncryptedM.Text = String.Empty;
             txtDecryptedM.Text = String.Empty;
+            sentence.Clear();
+            encrypted.Clear();
+            decrypted.Clear();
+
+        }
+
+        private void OnTextChanged(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar == (char)Keys.Left || e.KeyChar == (char)Keys.Right || e.KeyChar == (char)Keys.Up || e.KeyChar == (char)Keys.Down)
+            {
+                e.Handled = true;
+            }
+            if(e.KeyChar == (char)Keys.Back)
+            {
+                if(sentence.Count > 0)
+                {
+                    sentence.RemoveAt(sentence.Count - 1);
+                }
+            }
+            else
+            {
+                String aux = e.KeyChar.ToString();
+                sentence.Add(Encoding.ASCII.GetBytes(aux)[0]);
+            }
+            
         }
     }
 }
